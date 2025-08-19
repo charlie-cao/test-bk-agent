@@ -2,6 +2,8 @@
 class SpaceColonyGame {
     constructor() {
         this.audioEffects = new AudioEffectsManager();
+        this.vfx = new VFXManager();
+        window.VFXManagerInstance = this.vfx;
         this.shipAnimations = new ShipAnimationManager(this.audioEffects);
         this.gameState = {
             turn: 1,
@@ -229,6 +231,9 @@ class SpaceColonyGame {
             const planetElement = document.querySelector(`[data-planet-id="${planet.id}"]`);
             if (planetElement) {
                 this.audioEffects.createBuildingAnimation(planetElement);
+                const center = this.vfx.getCenterXYOfElement(planetElement);
+                this.vfx.pulseAt(center.x, center.y, 60, '#4ecdc4');
+                this.vfx.emitParticles(center.x, center.y, 18, '#4ecdc4');
             }
             
             // 延迟添加建筑，配合动画
@@ -416,6 +421,14 @@ class SpaceColonyGame {
                 Object.keys(planet.production).forEach(resource => {
                     if (!this.gameState.resources[resource]) this.gameState.resources[resource] = 0;
                     this.gameState.resources[resource] += planet.production[resource];
+                    // 资源产出vfx
+                    const el = document.querySelector(`[data-planet-id="${planet.id}"]`);
+                    if (el) {
+                        const { x, y } = this.vfx.getCenterXYOfElement(el);
+                        const map = { energy: '#ffd93d', research: '#4a9eff', materials: '#74b9ff', population: '#4ecdc4' };
+                        const color = map[resource] || '#ffffff';
+                        this.vfx.emitParticles(x, y, 8, color);
+                    }
                 });
             });
         
@@ -428,6 +441,13 @@ class SpaceColonyGame {
                 tech.researching = false;
                 this.gameState.technologies.push(tech);
                 this.showMessage(`研究完成: ${tech.name}`);
+                // 科技完成VFX
+                const researchTab = document.querySelector('#researchPanel h3');
+                if (researchTab) {
+                    const { x, y } = this.vfx.getCenterXYOfElement(researchTab);
+                    this.vfx.floatingText(x, y, '科技完成', '#4a9eff');
+                    this.vfx.pulseAt(x, y, 50, '#4a9eff');
+                }
                 
                 // 重新计算所有星球的生产力（应用新科技）
                 this.gameState.planets.forEach(planet => {
@@ -458,6 +478,12 @@ class SpaceColonyGame {
             this.gameState.resources.research += 100;
             this.gameState.resources.materials += 150;
             this.showMessage(`第 ${this.gameState.turn} 回合开始！获得回合奖励！`);
+            const header = document.querySelector('#gameHeader');
+            if (header) {
+                const { x, y } = this.vfx.getCenterXYOfElement(header);
+                this.vfx.floatingText(x, y, '+回合奖励', '#ffd93d');
+                this.vfx.pulseAt(x, y, 80, '#ffd93d');
+            }
         } else {
             this.showMessage(`第 ${this.gameState.turn} 回合开始！`);
         }
@@ -567,7 +593,11 @@ class SpaceColonyGame {
                 
                 // 添加爆炸效果
                 const rect = planetEl.getBoundingClientRect();
-                this.audioEffects.createExplosion(rect.left + rect.width/2, rect.top + rect.height/2);
+                const cx = rect.left + rect.width/2;
+                const cy = rect.top + rect.height/2;
+                this.audioEffects.createExplosion(cx, cy);
+                this.vfx.emitParticles(cx, cy, 30, '#ff6b6b');
+                this.vfx.pulseAt(cx, cy, 70, '#ff6b6b');
                 
                 // 更新星球周围的飞船
                 this.updatePlanetShips(targetPlanet, planetEl);
