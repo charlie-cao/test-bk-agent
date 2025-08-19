@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>星际殖民战争 - 策略游戏</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="gameContainer">
+        <!-- 游戏标题 -->
+        <header id="gameHeader">
+            <h1 class="game-title">星际殖民战争</h1>
+            <div class="stats-bar">
+                <div class="stat-item">
+                    <span class="stat-icon">⚡</span>
+                    <span id="energy">1000</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">🔬</span>
+                    <span id="research">500</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">⚒️</span>
+                    <span id="materials">800</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">👥</span>
+                    <span id="population">1200</span>
+                </div>
+                <div class="stat-item turn-info">
+                    <span class="stat-icon">🌍</span>
+                    <span>回合: <span id="currentTurn">1</span></span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 主游戏区域 -->
+        <main id="gameMain">
+            <!-- 星系地图 -->
+            <section id="galaxyMap" class="game-section">
+                <h2>星系地图</h2>
+                <div id="mapContainer" class="map-container">
+                    <!-- 星球将通过JavaScript动态生成 -->
+                </div>
+            </section>
+
+            <!-- 控制面板 -->
+            <section id="controlPanel" class="game-section">
+                <div class="panel-tabs">
+                    <button class="tab-btn active" data-tab="planets">星球管理</button>
+                    <button class="tab-btn" data-tab="fleet">舰队</button>
+                    <button class="tab-btn" data-tab="research">科技</button>
+                    <button class="tab-btn" data-tab="diplomacy">外交</button>
+                </div>
+
+                <!-- 星球管理面板 -->
+                <div id="planetsPanel" class="panel-content active">
+                    <h3>星球详情</h3>
+                    <div id="planetInfo" class="planet-info">
+                        <p>选择一个星球查看详细信息</p>
+                    </div>
+                    <div id="buildingsList" class="buildings-list">
+                        <!-- 建筑列表将动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 舰队面板 -->
+                <div id="fleetPanel" class="panel-content">
+                    <h3>舰队管理</h3>
+                    <div id="fleetList" class="fleet-list">
+                        <!-- 舰队列表将动态生成 -->
+                    </div>
+                    <div class="ship-construction">
+                        <h4>建造新舰船</h4>
+                        <div class="ship-types">
+                            <button class="build-btn" data-ship="scout">侦察舰 (能量:100)</button>
+                            <button class="build-btn" data-ship="fighter">战斗机 (能量:200, 材料:150)</button>
+                            <button class="build-btn" data-ship="cruiser">巡洋舰 (能量:500, 材料:400)</button>
+                            <button class="build-btn" data-ship="battleship">战列舰 (能量:1000, 材料:800)</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 科技面板 -->
+                <div id="researchPanel" class="panel-content">
+                    <h3>科技研发</h3>
+                    <div id="techTree" class="tech-tree">
+                        <!-- 科技树将动态生成 -->
+                    </div>
+                </div>
+
+                <!-- 外交面板 -->
+                <div id="diplomacyPanel" class="panel-content">
+                    <h3>外交关系</h3>
+                    <div id="diplomacyInfo" class="diplomacy-info">
+                        <p>发现其他文明后可进行外交活动</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- 游戏按钮 -->
+        <footer id="gameFooter">
+            <button id="endTurnBtn" class="end-turn-btn">结束回合</button>
+            <button id="saveGameBtn" class="save-btn">保存游戏</button>
+            <button id="loadGameBtn" class="save-btn">加载游戏</button>
+            <button id="musicToggle" class="help-btn">🔊 音乐</button>
+            <button id="helpBtn" class="help-btn">❓ 帮助</button>
+        </footer>
+    </div>
+
+    <!-- 弹窗模态框 -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- 战斗场景 -->
+    <div id="battleScene" class="battle-scene hidden">
+        <div class="battle-ui">
+            <h2>星际战斗</h2>
+            <div class="battle-field">
+                <div class="player-fleet">
+                    <h3>我方舰队</h3>
+                    <div id="playerShips"></div>
+                </div>
+                <div class="enemy-fleet">
+                    <h3>敌方舰队</h3>
+                    <div id="enemyShips"></div>
+                </div>
+            </div>
+            <div class="battle-controls">
+                <button id="attackBtn">攻击</button>
+                <button id="retreatBtn">撤退</button>
+            </div>
+            <div id="battleLog" class="battle-log"></div>
+        </div>
+    </div>
+
+    <script src="audio-effects.js"></script>
+    <script src="ship-animations.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
