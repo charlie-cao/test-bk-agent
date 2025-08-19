@@ -15,7 +15,9 @@ class SpaceColonyGame {
             fleets: [],
             technologies: [],
             selectedPlanet: null,
-            gamePhase: 'playing' // playing, battle, victory, defeat
+            gamePhase: 'playing', // playing, battle, victory, defeat
+            difficulty: 'normal',
+            theme: 'dark'
         };
         
         this.planetTypes = [
@@ -57,6 +59,8 @@ class SpaceColonyGame {
     init() {
         this.generateGalaxy();
         this.setupEventListeners();
+        this.createAdditionalUI();
+        this.applyTheme(this.gameState.theme || 'dark');
         this.updateUI();
         this.setupInitialShips();
         this.gameLoop();
@@ -451,6 +455,7 @@ class SpaceColonyGame {
         this.gameState.turn++;
         this.updateUI();
         this.checkVictoryConditions();
+        this.processRandomEvent();
         
         // 每5回合提供额外资源奖励
         if (this.gameState.turn % 5 === 0) {
@@ -469,7 +474,9 @@ class SpaceColonyGame {
         const playerPlanets = this.gameState.planets.filter(p => p.owner === 'player');
         
         // 根据回合数和难度调整敌方攻击概率
-        const attackProbability = Math.min(0.15 + (this.gameState.turn - 1) * 0.02, 0.5);
+        const cfg = this.getDifficultyConfig();
+        const baseProb = Math.min(0.15 + (this.gameState.turn - 1) * 0.02, 0.5);
+        const attackProbability = Math.min(baseProb * cfg.aiAggressivenessMultiplier, 0.8);
         if (Math.random() < attackProbability && enemyPlanets.length > 0 && playerPlanets.length > 0) {
             const attacker = enemyPlanets[Math.floor(Math.random() * enemyPlanets.length)];
             const target = playerPlanets[Math.floor(Math.random() * playerPlanets.length)];
@@ -770,6 +777,11 @@ class SpaceColonyGame {
         
         // 更新按钮状态
         this.updateButtonStates();
+
+        // 更新难度选择器与行动建议
+        const difficultySelect = document.getElementById('difficultySelect');
+        if (difficultySelect) difficultySelect.value = this.gameState.difficulty || 'normal';
+        this.updateActionHints();
     }
     
     updateButtonStates() {
@@ -892,6 +904,8 @@ class SpaceColonyGame {
             const savedGame = localStorage.getItem('spaceColonyGame');
             if (savedGame) {
                 this.gameState = JSON.parse(savedGame);
+                this.createAdditionalUI();
+                this.applyTheme(this.gameState.theme || 'dark');
                 this.updateUI();
                 this.showMessage('游戏已加载！');
                 return true;
@@ -920,6 +934,209 @@ class SpaceColonyGame {
         
         // 更新飞船位置（如果星球位置发生变化）
         this.shipAnimations.updateShipPositions();
+    }
+
+    // ===== UI增强：主题/难度/提示/随机事件 =====
+    createAdditionalUI() {
+        // 行动建议条
+        if (!document.getElementById('actionHints')) {
+            const hints = document.createElement('div');
+            hints.id = 'actionHints';
+            hints.className = 'action-hints';
+            hints.textContent = '建议：探索星系，选择一个星球开始建设';
+            const header = document.getElementById('gameHeader');
+            if (header && header.parentNode) {
+                header.parentNode.insertBefore(hints, header.nextSibling);
+            }
+        }
+
+        // 难度选择器
+        if (!document.getElementById('difficultySelect')) {
+            const statsBar = document.querySelector('.stats-bar');
+            if (statsBar) {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'stat-item';
+                wrapper.innerHTML = `
+                    <label for="difficultySelect">难度:</label>
+                    <select id="difficultySelect">
+                        <option value="easy">容易</option>
+                        <option value="normal">普通</option>
+                        <option value="hard">困难</option>
+                    </select>
+                `;
+                statsBar.appendChild(wrapper);
+                const select = wrapper.querySelector('#difficultySelect');
+                select.value = this.gameState.difficulty || 'normal';
+                select.addEventListener('change', (e) => {
+                    this.setDifficulty(e.target.value);
+                });
+            }
+        }
+
+        // 主题切换按钮
+        if (!document.getElementById('themeToggle')) {
+            const footer = document.getElementById('gameFooter');
+            if (footer) {
+                const btn = document.createElement('button');
+                btn.id = 'themeToggle';
+                btn.className = 'help-btn';
+                btn.textContent = '🎨 主题';
+                btn.addEventListener('click', () => {
+                    const next = (this.gameState.theme === 'dark') ? 'light' : 'dark';
+                    this.applyTheme(next);
+                    this.gameState.theme = next;
+                    this.saveGame();
+                });
+                const helpBtn = document.getElementById('helpBtn');
+                if (helpBtn) {
+                    footer.insertBefore(btn, helpBtn);
+                } else {
+                    footer.appendChild(btn);
+                }
+            }
+        }
+
+        // 注入额外样式
+        if (!document.getElementById('extraThemeStyles')) {
+            const style = document.createElement('style');
+            style.id = 'extraThemeStyles';
+            style.textContent = `
+                .action-hints { 
+                    margin: 0 1rem; 
+                    padding: 0.5rem 1rem; 
+                    background: rgba(74, 158, 255, 0.12); 
+                    border: 1px solid rgba(74, 158, 255, 0.3);
+                    border-left: 4px solid #4a9eff;
+                    border-radius: 8px; 
+                    color: #e0e6ed; 
+                    font-family: 'Orbitron', monospace; 
+                }
+                body.light-theme { 
+                    background: linear-gradient(135deg, #eef2f7 0%, #ffffff 50%, #e7eef7 100%) !important; 
+                    color: #1a2233 !important; 
+                }
+                body.light-theme #gameHeader { 
+                    background: linear-gradient(90deg, rgba(240, 245, 255, 0.9) 0%, rgba(230, 238, 255, 0.9) 100%) !important; 
+                    border-bottom-color: #5b8def !important; 
+                }
+                body.light-theme .game-section { 
+                    background: rgba(255, 255, 255, 0.8) !important; 
+                    border-color: rgba(91, 141, 239, 0.3) !important; 
+                }
+                body.light-theme .map-container { 
+                    border-color: #5b8def !important; 
+                }
+                body.light-theme .stat-item { 
+                    background: rgba(91, 141, 239, 0.12) !important; 
+                    border-color: rgba(91, 141, 239, 0.3) !important; 
+                    color: #1a2233 !important; 
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        this.applyTheme(this.gameState.theme || 'dark');
+    }
+
+    applyTheme(theme) {
+        document.body.classList.toggle('light-theme', theme === 'light');
+    }
+
+    setDifficulty(level) {
+        this.gameState.difficulty = level;
+        this.showMessage(`已切换难度：${{easy:'容易',normal:'普通',hard:'困难'}[level] || level}`);
+        this.saveGame();
+    }
+
+    getDifficultyConfig() {
+        const level = this.gameState.difficulty || 'normal';
+        switch (level) {
+            case 'easy':
+                return { aiAggressivenessMultiplier: 0.7, eventProbability: 0.15 };
+            case 'hard':
+                return { aiAggressivenessMultiplier: 1.4, eventProbability: 0.35 };
+            default:
+                return { aiAggressivenessMultiplier: 1.0, eventProbability: 0.25 };
+        }
+    }
+
+    updateActionHints() {
+        const el = document.getElementById('actionHints');
+        if (!el) return;
+        const playerPlanets = this.gameState.planets.filter(p => p.owner === 'player');
+        const hasShipyard = playerPlanets.some(p => p.buildings.includes('shipyard'));
+        const techAvailable = this.techTree.some(t => !t.researched && !t.researching && this.canAfford(t.cost));
+        const canBuildShip = hasShipyard && (
+            this.canAfford(this.shipTypes.scout.cost) || this.canAfford(this.shipTypes.fighter.cost)
+        );
+        let hint = '建议：探索星系，选择一个星球开始建设';
+        if (!hasShipyard && playerPlanets.length > 0) {
+            hint = '建议：在母星建造造船厂以开启舰船建造';
+        } else if (techAvailable) {
+            hint = '建议：点击“科技”面板，优先研究“高级能源技术”提升产出';
+        } else if (canBuildShip) {
+            hint = '建议：建造侦察舰或战斗机，准备进攻附近的敌方行星';
+        } else if (this.gameState.turn < 5) {
+            hint = '建议：先建能源与研究，提高每回合产出';
+        } else {
+            hint = '建议：检查舰队与防御，择机发起进攻或巩固星球';
+        }
+        el.textContent = hint;
+    }
+
+    processRandomEvent() {
+        const cfg = this.getDifficultyConfig();
+        if (Math.random() > cfg.eventProbability) return;
+
+        const events = [
+            {
+                id: 'solar_flare',
+                title: '太阳风暴',
+                desc: '强烈的太阳风暴影响本回合的能源系统。',
+                options: [
+                    { text: '关闭非必要设施（-100⚡，减少损失）', effect: () => { this.gameState.resources.energy = Math.max(0, this.gameState.resources.energy - 100); this.showMessage('太阳风暴造成轻微影响'); }},
+                    { text: '强撑运行（-50⚡，随机建筑停机）', effect: () => { this.gameState.resources.energy = Math.max(0, this.gameState.resources.energy - 50); const p = this.gameState.planets.find(pl => pl.owner==='player' && pl.buildings.length>0); if (p) { p.buildings.pop(); this.recalculatePlanetProduction(p); } this.showMessage('一处建筑停机检修'); }}
+                ]
+            },
+            {
+                id: 'alien_artifact',
+                title: '外星遗物',
+                desc: '在一颗中立行星轨道发现外星遗物。',
+                options: [
+                    { text: '研究遗物（+200🔬）', effect: () => { this.gameState.resources.research += 200; this.showMessage('研究获得突破！'); }},
+                    { text: '拆解遗物（+150⚒️）', effect: () => { this.gameState.resources.materials += 150; this.showMessage('获得稀有材料'); }}
+                ]
+            },
+            {
+                id: 'pirates',
+                title: '太空海盗',
+                desc: '海盗袭击边境星球！',
+                options: [
+                    { text: '支付赎金（-150⚡）', effect: () => { this.gameState.resources.energy = Math.max(0, this.gameState.resources.energy - 150); this.showMessage('海盗撤退了'); }},
+                    { text: '武力驱逐（随机星球-人口10%）', effect: () => { const p = this.gameState.planets.filter(pl => pl.owner==='player'); if (p.length){ const t=p[Math.floor(Math.random()*p.length)]; t.population = Math.max(0, Math.floor(t.population*0.9)); this.showMessage(`${t.name} 遭遇小规模冲突`); }} }
+                ]
+            }
+        ];
+
+        const ev = events[Math.floor(Math.random() * events.length)];
+        const modal = document.getElementById('modal');
+        const body = document.getElementById('modalBody');
+        body.innerHTML = `
+            <h2>${ev.title}</h2>
+            <p>${ev.desc}</p>
+            <div style="margin-top:1rem; display:flex; gap:0.5rem; flex-wrap:wrap;">
+                ${ev.options.map((op, idx) => `<button class=\"build-btn\" id=\"eventOpt${idx}\">${op.text}</button>`).join('')}
+            </div>
+        `;
+        modal.classList.remove('hidden');
+        ev.options.forEach((op, idx) => {
+            const btn = document.getElementById(`eventOpt${idx}`);
+            if (btn) btn.onclick = () => {
+                op.effect();
+                modal.classList.add('hidden');
+                this.updateUI();
+            };
+        });
     }
 }
 
