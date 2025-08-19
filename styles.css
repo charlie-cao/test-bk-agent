@@ -791,3 +791,86 @@ body {
         font-size: 0.8rem;
     }
 }
+<<<<<<< Current (Your changes)
+=======
+
+/* Visual Effects System Enhancements */
+.planet {
+    transition: all 0.3s ease;
+}
+
+.planet:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+.tech-item {
+    transition: all 0.3s ease;
+}
+
+.tech-item:hover:not(.researched):not(.researching) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 20px rgba(156, 39, 176, 0.3);
+}
+
+.build-btn, .tab-btn {
+    transition: all 0.2s ease;
+}
+
+.build-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+}
+
+.tab-btn:hover {
+    background: linear-gradient(135deg, #2a5298 0%, #1e3a8a 100%);
+}
+
+/* Enhanced pulse animation for player planets */
+@keyframes enhancedPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+    }
+}
+
+.planet.player {
+    animation: enhancedPulse 2s infinite;
+}
+
+/* Smooth transitions for resource stats */
+.stat-item {
+    transition: all 0.3s ease;
+}
+
+.stat-item:hover {
+    transform: scale(1.05);
+    text-shadow: 0 0 10px currentColor;
+}
+
+/* Glowing effect for active elements */
+.active-effect {
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    animation: activeGlow 1s ease-in-out infinite alternate;
+}
+
+@keyframes activeGlow {
+    from {
+        box-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+    }
+    to {
+        box-shadow: 0 0 30px rgba(255, 215, 0, 1);
+    }
+}
+
+/* Visual effects canvas styling */
+#visualEffectsCanvas {
+    pointer-events: none;
+    z-index: 1000;
+}
+>>>>>>> Incoming (Background Agent changes)

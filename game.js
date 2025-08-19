@@ -3,6 +3,7 @@ class SpaceColonyGame {
     constructor() {
         this.audioEffects = new AudioEffectsManager();
         this.shipAnimations = new ShipAnimationManager(this.audioEffects);
+        this.visualEffects = new VisualEffectsManager();
         this.gameState = {
             turn: 1,
             resources: {
@@ -233,6 +234,10 @@ class SpaceColonyGame {
             const planetElement = document.querySelector(`[data-planet-id="${planet.id}"]`);
             if (planetElement) {
                 this.audioEffects.createBuildingAnimation(planetElement);
+                // 触发建筑建造特效
+                document.dispatchEvent(new CustomEvent('buildingConstructed', {
+                    detail: { element: planetElement, type: buildingType }
+                }));
             }
             
             // 延迟添加建筑，配合动画
@@ -326,6 +331,10 @@ class SpaceColonyGame {
             const planetElement = document.querySelector(`[data-planet-id="${shipyardPlanet.id}"]`);
             if (planetElement) {
                 this.shipAnimations.launchShip(planetElement, shipType);
+                // 触发舰船建造特效
+                document.dispatchEvent(new CustomEvent('shipBuilt', {
+                    detail: { element: planetElement, shipType: shipType }
+                }));
             }
             
             this.updateFleetDisplay();
@@ -387,6 +396,7 @@ class SpaceColonyGame {
         this.techTree.forEach(tech => {
             const techEl = document.createElement('div');
             techEl.className = `tech-item ${tech.researched ? 'researched' : ''} ${tech.researching ? 'researching' : ''}`;
+            techEl.setAttribute('data-tech-id', tech.id);
             
             let statusText = '';
             if (tech.researched) {
@@ -419,7 +429,18 @@ class SpaceColonyGame {
             .forEach(planet => {
                 Object.keys(planet.production).forEach(resource => {
                     if (!this.gameState.resources[resource]) this.gameState.resources[resource] = 0;
-                    this.gameState.resources[resource] += planet.production[resource];
+                    const amount = planet.production[resource];
+                    this.gameState.resources[resource] += amount;
+                    
+                    // 触发资源获得特效
+                    if (amount > 0) {
+                        const planetElement = document.querySelector(`[data-planet-id="${planet.id}"]`);
+                        if (planetElement) {
+                            document.dispatchEvent(new CustomEvent('resourceGained', {
+                                detail: { element: planetElement, amount: amount, type: resource }
+                            }));
+                        }
+                    }
                 });
             });
         
@@ -432,6 +453,14 @@ class SpaceColonyGame {
                 tech.researching = false;
                 this.gameState.technologies.push(tech);
                 this.showMessage(`研究完成: ${tech.name}`);
+                
+                // 触发科技研发完成特效
+                const techElement = document.querySelector(`[data-tech-id="${tech.id}"]`);
+                if (techElement) {
+                    document.dispatchEvent(new CustomEvent('techResearched', {
+                        detail: { element: techElement, tech: tech }
+                    }));
+                }
                 
                 // 重新计算所有星球的生产力（应用新科技）
                 this.gameState.planets.forEach(planet => {
@@ -528,6 +557,11 @@ class SpaceColonyGame {
         const targetElement = document.querySelector(`[data-planet-id="${targetPlanet.id}"]`);
         
         if (attackerElement && targetElement) {
+            // 触发战斗开始特效
+            document.dispatchEvent(new CustomEvent('battleStart', {
+                detail: { attackerElement: attackerElement, defenderElement: targetElement }
+            }));
+            
             // 获取攻击方星球周围的飞船
             const attackerShips = this.shipAnimations.getShipsAroundPlanet(attackerElement);
             
@@ -575,6 +609,13 @@ class SpaceColonyGame {
                 // 添加爆炸效果
                 const rect = planetEl.getBoundingClientRect();
                 this.audioEffects.createExplosion(rect.left + rect.width/2, rect.top + rect.height/2);
+                
+                // 触发星球征服特效
+                if (attackerOwner === 'player') {
+                    document.dispatchEvent(new CustomEvent('planetConquered', {
+                        detail: { element: planetEl, planet: targetPlanet }
+                    }));
+                }
                 
                 // 更新星球周围的飞船
                 this.updatePlanetShips(targetPlanet, planetEl);

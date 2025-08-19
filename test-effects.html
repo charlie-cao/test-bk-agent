@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>视觉特效系统测试</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: white;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+        }
+        
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #333;
+            border-radius: 8px;
+        }
+        
+        .test-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .test-button:hover {
+            background: #45a049;
+        }
+        
+        .test-element {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            border-radius: 50%;
+            margin: 20px;
+            display: inline-block;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .stats {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>星际殖民战争 - 视觉特效系统测试</h1>
+        
+        <div class="stats" id="stats">
+            <div>FPS: <span id="fps">0</span></div>
+            <div>粒子数: <span id="particles">0</span></div>
+            <div>特效数: <span id="effects">0</span></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>建筑特效测试</h2>
+            <button class="test-button" onclick="testBuildingEffect('power_plant')">能源发电站</button>
+            <button class="test-button" onclick="testBuildingEffect('research_lab')">研究实验室</button>
+            <button class="test-button" onclick="testBuildingEffect('shipyard')">造船厂</button>
+            <div class="test-element" id="building-test" data-planet-id="test-1"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>战斗特效测试</h2>
+            <button class="test-button" onclick="testBattleEffect()">开始战斗</button>
+            <div class="test-element" id="attacker" data-planet-id="attacker" style="background: linear-gradient(135deg, #2196F3, #1565C0);"></div>
+            <div class="test-element" id="defender" data-planet-id="defender" style="background: linear-gradient(135deg, #F44336, #C62828);"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>科技特效测试</h2>
+            <button class="test-button" onclick="testTechEffect()">研究完成</button>
+            <div class="test-element" id="tech-test" data-tech-id="advanced_energy"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>征服特效测试</h2>
+            <button class="test-button" onclick="testConquestEffect()">星球征服</button>
+            <div class="test-element" id="conquest-test" data-planet-id="conquest"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>资源特效测试</h2>
+            <button class="test-button" onclick="testResourceEffect('energy')">能量</button>
+            <button class="test-button" onclick="testResourceEffect('research')">研究</button>
+            <button class="test-button" onclick="testResourceEffect('materials')">材料</button>
+            <button class="test-button" onclick="testResourceEffect('population')">人口</button>
+            <div class="test-element" id="resource-test" data-planet-id="resource"></div>
+        </div>
+        
+        <div class="test-section">
+            <h2>特效设置</h2>
+            <label>
+                粒子质量:
+                <select id="quality" onchange="updateQuality()">
+                    <option value="low">低</option>
+                    <option value="medium">中</option>
+                    <option value="high" selected>高</option>
+                </select>
+            </label>
+            <button class="test-button" onclick="clearEffects()">清除所有特效</button>
+        </div>
+    </div>
+
+    <script src="visual-effects.js"></script>
+    <script>
+        let visualEffects;
+        
+        // 初始化特效系统
+        window.onload = function() {
+            visualEffects = new VisualEffectsManager();
+            updateStats();
+        };
+        
+        function testBuildingEffect(type) {
+            const element = document.getElementById('building-test');
+            document.dispatchEvent(new CustomEvent('buildingConstructed', {
+                detail: { element: element, type: type }
+            }));
+        }
+        
+        function testBattleEffect() {
+            const attacker = document.getElementById('attacker');
+            const defender = document.getElementById('defender');
+            document.dispatchEvent(new CustomEvent('battleStart', {
+                detail: { attackerElement: attacker, defenderElement: defender }
+            }));
+        }
+        
+        function testTechEffect() {
+            const element = document.getElementById('tech-test');
+            document.dispatchEvent(new CustomEvent('techResearched', {
+                detail: { element: element, tech: { name: '高级能源技术' } }
+            }));
+        }
+        
+        function testConquestEffect() {
+            const element = document.getElementById('conquest-test');
+            document.dispatchEvent(new CustomEvent('planetConquered', {
+                detail: { element: element, planet: { name: '测试星球' } }
+            }));
+        }
+        
+        function testResourceEffect(type) {
+            const element = document.getElementById('resource-test');
+            document.dispatchEvent(new CustomEvent('resourceGained', {
+                detail: { element: element, amount: 100, type: type }
+            }));
+        }
+        
+        function updateQuality() {
+            const quality = document.getElementById('quality').value;
+            visualEffects.updateSettings({ particleQuality: quality });
+        }
+        
+        function clearEffects() {
+            visualEffects.clearAllEffects();
+        }
+        
+        function updateStats() {
+            if (visualEffects) {
+                const stats = visualEffects.getPerformanceStats();
+                document.getElementById('fps').textContent = stats.fps;
+                document.getElementById('particles').textContent = stats.particleCount;
+                document.getElementById('effects').textContent = stats.effectCount;
+            }
+            requestAnimationFrame(updateStats);
+        }
+    </script>
+</body>
+</html>
