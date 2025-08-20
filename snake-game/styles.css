@@ -1,0 +1,581 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Arial', sans-serif;
+    background: #1a1a1a;
+    color: #ffffff;
+    overflow: hidden;
+    height: 100vh;
+}
+
+/* 左侧导航栏 */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 320px;
+    height: 100vh;
+    background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%);
+    overflow-y: auto;
+    z-index: 1000;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.3);
+    scrollbar-width: thin;
+    scrollbar-color: #7f8c8d #34495e;
+}
+
+.sidebar::-webkit-scrollbar {
+    width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+    background: #34495e;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+    background: #7f8c8d;
+    border-radius: 3px;
+}
+
+.sidebar-header {
+    padding: 20px;
+    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+    text-align: center;
+}
+
+.sidebar-header h2 {
+    font-size: 1.8em;
+    margin-bottom: 15px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+.user-avatar {
+    font-size: 2em;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.user-details {
+    text-align: left;
+}
+
+.username {
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+
+.user-level {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+/* 侧边栏区域 */
+.sidebar-section {
+    padding: 20px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-section h3 {
+    color: #ecf0f1;
+    margin-bottom: 15px;
+    font-size: 1.1em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 游戏控制按钮 */
+.sidebar-btn {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border: none;
+    border-radius: 8px;
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sidebar-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar-btn:active {
+    transform: translateY(0);
+}
+
+/* 游戏信息 */
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-label {
+    color: #bdc3c7;
+    font-size: 0.9em;
+}
+
+.info-value {
+    color: #f39c12;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+/* 每日签到 */
+.checkin-days {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin: 15px 0;
+}
+
+.day {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #34495e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: #bdc3c7;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.day.checked {
+    background: linear-gradient(45deg, #27ae60, #2ecc71);
+    color: white;
+    transform: scale(1.1);
+    border-color: #f39c12;
+}
+
+.checkin-btn {
+    background: linear-gradient(45deg, #27ae60, #2ecc71);
+}
+
+.checkin-reward {
+    text-align: center;
+    font-size: 0.8em;
+    color: #bdc3c7;
+    margin-top: 10px;
+}
+
+/* 成就系统 */
+.achievement-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.achievement {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    background: #34495e;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.achievement.unlocked {
+    background: linear-gradient(45deg, #f39c12, #e67e22);
+    transform: scale(1.02);
+    border-color: #f1c40f;
+}
+
+.achievement-icon {
+    font-size: 1.2em;
+}
+
+.achievement-name {
+    font-weight: bold;
+    color: #ecf0f1;
+}
+
+/* 限时活动 */
+.event-timer {
+    margin: 15px 0;
+    text-align: center;
+}
+
+.countdown {
+    font-size: 1.1em;
+    font-weight: bold;
+    color: #e74c3c;
+    margin-bottom: 8px;
+}
+
+.event-bonus {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+    color: white;
+    padding: 5px 10px;
+    border-radius: 15px;
+    font-size: 0.9em;
+    font-weight: bold;
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.event-btn {
+    background: linear-gradient(45deg, #e74c3c, #c0392b);
+}
+
+.event-btn.active {
+    background: linear-gradient(45deg, #27ae60, #2ecc71);
+}
+
+/* 分享功能 */
+.share-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin: 15px 0;
+}
+
+.share-btn {
+    background: linear-gradient(45deg, #9b59b6, #8e44ad);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.share-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.share-reward {
+    text-align: center;
+    font-size: 0.8em;
+    color: #bdc3c7;
+    margin-top: 8px;
+}
+
+/* VIP特权 */
+.vip-benefits {
+    margin: 15px 0;
+}
+
+.vip-benefit {
+    background: linear-gradient(45deg, #f39c12, #e67e22);
+    color: #2c3e50;
+    padding: 5px 10px;
+    border-radius: 10px;
+    margin: 5px 0;
+    font-size: 0.9em;
+    font-weight: bold;
+    text-align: center;
+}
+
+.vip-btn {
+    background: linear-gradient(45deg, #f1c40f, #f39c12);
+    color: #2c3e50;
+}
+
+.vip-price {
+    text-align: center;
+    font-size: 0.9em;
+    color: #bdc3c7;
+    margin-top: 10px;
+}
+
+.price {
+    color: #e74c3c;
+    font-weight: bold;
+    font-size: 1.1em;
+}
+
+/* 充值功能 */
+.recharge-options {
+    margin: 15px 0;
+}
+
+.recharge-option {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    background: #34495e;
+    border-radius: 8px;
+    margin: 8px 0;
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.recharge-option:hover {
+    border-color: #3498db;
+    transform: translateX(5px);
+}
+
+.recharge-icon {
+    font-size: 1.5em;
+}
+
+.recharge-name {
+    font-weight: bold;
+    color: #ecf0f1;
+}
+
+.recharge-btn {
+    background: linear-gradient(45deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.8em;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.recharge-btn:hover {
+    transform: scale(1.05);
+}
+
+.balance-info {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(52, 73, 94, 0.5);
+    border-radius: 8px;
+}
+
+.balance-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    color: #ecf0f1;
+}
+
+.balance-item span:last-child {
+    color: #f39c12;
+    font-weight: bold;
+}
+
+/* 游戏说明 */
+.instructions p {
+    color: #bdc3c7;
+    font-size: 0.9em;
+    margin: 5px 0;
+    padding-left: 10px;
+}
+
+/* 主游戏区域 */
+.main-game {
+    position: fixed;
+    left: 320px;
+    top: 0;
+    width: calc(100vw - 320px);
+    height: 100vh;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#gameCanvas {
+    border: 2px solid #3498db;
+    border-radius: 10px;
+    background: #1a1a1a;
+    box-shadow: 0 0 30px rgba(52, 152, 219, 0.3);
+    cursor: crosshair;
+}
+
+/* 游戏状态覆盖层 */
+.game-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+}
+
+.overlay-content {
+    text-align: center;
+    color: white;
+}
+
+.overlay-content h2 {
+    font-size: 3em;
+    margin-bottom: 20px;
+    color: #e74c3c;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.overlay-content p {
+    font-size: 1.5em;
+    color: #bdc3c7;
+}
+
+/* 弹窗样式 */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    position: absolute;
+    right: 20px;
+    top: 15px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #fff;
+}
+
+/* 充值表单 */
+.recharge-form {
+    text-align: left;
+}
+
+.form-group {
+    margin: 20px 0;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #ecf0f1;
+    font-weight: bold;
+}
+
+.form-group select,
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    background: #34495e;
+    color: white;
+    font-size: 1em;
+}
+
+.form-group select:focus,
+.form-group input:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px #3498db;
+}
+
+#paymentInfo {
+    background: #34495e;
+    padding: 15px;
+    border-radius: 8px;
+    min-height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#paymentInfo p {
+    color: #bdc3c7;
+    margin: 0;
+}
+
+#confirmRecharge {
+    width: 100%;
+    margin-top: 20px;
+    background: linear-gradient(45deg, #27ae60, #2ecc71);
+}
+
+/* 响应式设计 */
+@media (max-width: 1200px) {
+    .sidebar {
+        width: 280px;
+    }
+    
+    .main-game {
+        left: 280px;
+        width: calc(100vw - 280px);
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
+    
+    .main-game {
+        left: 0;
+        width: 100vw;
+    }
+    
+    .sidebar-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1001;
+        background: #3498db;
+        color: white;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+}

@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>贪吃蛇游戏 - 满屏体验</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- 左侧导航栏 -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>🐍 贪吃蛇</h2>
+            <div class="user-info">
+                <div class="user-avatar">👤</div>
+                <div class="user-details">
+                    <div class="username">玩家</div>
+                    <div class="user-level">等级: <span id="userLevel">1</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 游戏控制 -->
+        <div class="sidebar-section">
+            <h3>🎮 游戏控制</h3>
+            <button id="startBtn" class="sidebar-btn">开始游戏</button>
+            <button id="pauseBtn" class="sidebar-btn">暂停</button>
+            <button id="restartBtn" class="sidebar-btn">重新开始</button>
+        </div>
+        
+        <!-- 游戏信息 -->
+        <div class="sidebar-section">
+            <h3>📊 游戏信息</h3>
+            <div class="info-item">
+                <span class="info-label">得分:</span>
+                <span id="score" class="info-value">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">最高分:</span>
+                <span id="highScore" class="info-value">0</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">蛇长度:</span>
+                <span id="snakeLength" class="info-value">1</span>
+            </div>
+            <div class="info-item">
+                <span class="info-label">VIP状态:</span>
+                <span id="vipStatus" class="info-value">免费用户</span>
+            </div>
+        </div>
+        
+        <!-- 每日签到 -->
+        <div class="sidebar-section">
+            <h3>📅 每日签到</h3>
+            <div class="checkin-days">
+                <span class="day" data-day="1">1</span>
+                <span class="day" data-day="2">2</span>
+                <span class="day" data-day="3">3</span>
+                <span class="day" data-day="4">4</span>
+                <span class="day" data-day="5">5</span>
+                <span class="day" data-day="6">6</span>
+                <span class="day" data-day="7">7</span>
+            </div>
+            <button id="checkinBtn" class="sidebar-btn checkin-btn">今日签到</button>
+            <div class="checkin-reward">奖励: <span id="checkinReward">+50分</span></div>
+        </div>
+        
+        <!-- 成就系统 -->
+        <div class="sidebar-section">
+            <h3>🏆 成就系统</h3>
+            <div class="achievement-list">
+                <div class="achievement" data-id="first-food">
+                    <span class="achievement-icon">🥇</span>
+                    <span class="achievement-name">初次进食</span>
+                </div>
+                <div class="achievement" data-id="score-100">
+                    <span class="achievement-icon">🥈</span>
+                    <span class="achievement-name">百分达人</span>
+                </div>
+                <div class="achievement" data-id="snake-10">
+                    <span class="achievement-icon">🥉</span>
+                    <span class="achievement-name">长蛇之王</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 限时活动 -->
+        <div class="sidebar-section">
+            <h3>⚡ 限时活动</h3>
+            <div class="event-timer">
+                <div class="countdown">剩余: <span id="eventTime">23:59:59</span></div>
+                <div class="event-bonus">双倍得分!</div>
+            </div>
+            <button id="joinEventBtn" class="sidebar-btn event-btn">参与活动</button>
+        </div>
+        
+        <!-- 分享功能 -->
+        <div class="sidebar-section">
+            <h3>📤 分享游戏</h3>
+            <div class="share-buttons">
+                <button class="share-btn" data-platform="wechat">微信</button>
+                <button class="share-btn" data-platform="qq">QQ</button>
+                <button class="share-btn" data-platform="weibo">微博</button>
+            </div>
+            <div class="share-reward">分享奖励: <span id="shareReward">+20分</span></div>
+        </div>
+        
+        <!-- VIP特权 -->
+        <div class="sidebar-section">
+            <h3>👑 VIP特权</h3>
+            <div class="vip-benefits">
+                <div class="vip-benefit">🎯 自动瞄准</div>
+                <div class="vip-benefit">⚡ 速度提升</div>
+                <div class="vip-benefit">💎 双倍得分</div>
+            </div>
+            <button id="upgradeVipBtn" class="sidebar-btn vip-btn">升级VIP</button>
+            <div class="vip-price">仅需 <span class="price">¥9.9</span>/月</div>
+        </div>
+        
+        <!-- 充值功能 -->
+        <div class="sidebar-section">
+            <h3>💰 充值中心</h3>
+            <div class="recharge-options">
+                <div class="recharge-option">
+                    <span class="recharge-icon">💳</span>
+                    <span class="recharge-name">信用卡</span>
+                    <button class="recharge-btn" data-method="credit">充值</button>
+                </div>
+                <div class="recharge-option">
+                    <span class="recharge-icon">💵</span>
+                    <span class="recharge-name">美元</span>
+                    <button class="recharge-btn" data-method="usd">充值</button>
+                </div>
+                <div class="recharge-option">
+                    <span class="recharge-icon">₮</span>
+                    <span class="recharge-name">USDT</span>
+                    <button class="recharge-btn" data-method="usdt">充值</button>
+                </div>
+            </div>
+            <div class="balance-info">
+                <div class="balance-item">
+                    <span>余额:</span>
+                    <span id="userBalance">$0.00</span>
+                </div>
+                <div class="balance-item">
+                    <span>USDT:</span>
+                    <span id="usdtBalance">0.00</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 游戏说明 -->
+        <div class="sidebar-section">
+            <h3>❓ 游戏说明</h3>
+            <div class="instructions">
+                <p>• 移动鼠标控制蛇的方向</p>
+                <p>• 吃到食物增加长度和得分</p>
+                <p>• 避免撞墙和自身</p>
+                <p>• 空格键暂停/继续</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 主游戏区域 -->
+    <div class="main-game">
+        <canvas id="gameCanvas"></canvas>
+        
+        <!-- 游戏状态覆盖层 -->
+        <div id="gameOverlay" class="game-overlay" style="display: none;">
+            <div class="overlay-content">
+                <h2 id="overlayTitle">游戏暂停</h2>
+                <p id="overlayMessage">按空格键继续游戏</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 充值弹窗 -->
+    <div id="rechargeModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>💰 充值中心</h2>
+            <div class="recharge-form">
+                <div class="form-group">
+                    <label>充值方式:</label>
+                    <select id="rechargeMethod">
+                        <option value="credit">信用卡</option>
+                        <option value="usd">美元</option>
+                        <option value="usdt">USDT</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>充值金额:</label>
+                    <input type="number" id="rechargeAmount" placeholder="输入金额" min="1" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label>支付信息:</label>
+                    <div id="paymentInfo">
+                        <p>请选择充值方式</p>
+                    </div>
+                </div>
+                <button id="confirmRecharge" class="sidebar-btn">确认充值</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 通用弹窗 -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
